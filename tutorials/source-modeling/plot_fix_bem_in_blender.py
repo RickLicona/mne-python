@@ -14,6 +14,7 @@ Ezequiel Mikulan.
 
 # Authors: Marijn van Vliet <w.m.vanvliet@gmail.com>
 #          Ezequiel Mikulan <e.mikulan@gmail.com>
+#          Ricardo Licona <ricklicona@icloud.com>
 #
 # License: BSD (3-clause)
 
@@ -25,8 +26,30 @@ import shutil
 import mne
 
 data_path = mne.datasets.sample.data_path()
+subject = 'sample'
 subjects_dir = op.join(data_path, 'subjects')
 bem_dir = op.join(subjects_dir, 'sample', 'bem')
+
+###############################################################################
+# Visualizing surfaces
+# --------------------
+#
+# The easier way to visualizing intersections between surfaces (i.e., inner skull, 
+# outer skull, and outer skin) is with mne.viz.plot_bem, savefig will save them in 
+# the folder named plots.  
+
+# Plot the inner skull, outer skull, and outer skin surfaces
+bem_surfaces = mne.viz.plot_bem(subject=subject, subjects_dir=subjects_dir,
+                                brain_surfaces='white', orientation='coronal')
+
+# Create the 'plot' folder
+plots_dir = op.join(subjects_dir, 'sample', 'plots')
+os.makedirs(plots_dir, exist_ok=True)
+
+# Save the plots
+plot_name = op.join(plots_dir, "%s_BEM" % (subject))
+bem_surfaces.savefig(plot_name, format='eps')
+
 
 ###############################################################################
 # Exporting surfaces to Blender
@@ -79,16 +102,41 @@ mne.write_surface(op.join(conv_dir, 'outer_skull.obj'), coords, faces,
 # Repeat the procedure for all surfaces you want to import (e.g. inner_skull
 # and outer_skull).
 #
-# You can now edit the surfaces any way you like. See the
-# `Beginner Blender Tutorial Series
-# <https://www.youtube.com/playlist?list=PLxLGgWrla12dEW5mjO09kR2_TzPqDTXdw>`_
-# to learn how to use Blender. Specifically, `part 2
-# <http://www.youtube.com/watch?v=RaT-uG5wgUw&t=5m30s>`_ will teach you how to
-# use the basic editing tools you need to fix the surface.
+# In the next image, you can observe the error previously generated.
 #
-# .. image:: ../../_static/blender_import_obj/blender_import_obj2.jpg
+# .. image:: ../../_static/blender_import_obj/blender_import_obj4.jpg
 #    :width: 800
 #    :alt: Editing surfaces in Blender
+#
+# The *tab key* will permit to change to *edit mode*.
+#
+# .. image:: ../../_static/blender_import_obj/blender_import_obj5.jpg
+#    :width: 800
+#    :alt: Edit mode in Blender
+#
+# The *C key* will activate a *circle selection mode*, and the *scroll wheel* permit 
+# increases or decreases it. 
+#
+# .. image:: ../../_static/blender_import_obj/blender_import_obj6.jpg
+#    :width: 800
+#    :alt: Circle mode in Blender
+#
+# The *G key* plus the *mouse's movement* will modify the form of the surface part 
+# previously selected.
+#
+# .. image:: ../../_static/blender_import_obj/blender_import_obj7.jpg
+#    :width: 800
+#    :alt: Modify surface in Blender
+#
+# Returning to *object mode* with the tab key, we can view the final result.
+#
+# .. image:: ../../_static/blender_import_obj/blender_import_obj8.jpg
+#    :width: 800
+#    :alt: Object mode in Blender
+#
+# Note: It is recommendable to make little modifications in Blender, then check the
+# surface plots. The idea is that you detect step by step, which parts of the 
+# surfaces to modify and eliminate the intersections between the surfaces.
 #
 # Using the fixed surfaces in MNE-Python
 # --------------------------------------
